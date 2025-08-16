@@ -1,23 +1,14 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/raah959/test.git',
-                    credentialsId: 'github-creds'
-            }
+    agent {
+        docker {
+            image 'bitnami/kubectl:latest'
+            args '-v /root/.kube:/root/.kube'
         }
-
-        stage('Deploy to Minikube') {
+    }
+    stages {
+        stage('Deploy') {
             steps {
-                sh '''
-                echo "Applying Kubernetes manifests..."
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
-                kubectl get pods -n default
-                '''
+                sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
     }
