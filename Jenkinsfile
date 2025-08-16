@@ -1,49 +1,44 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml """
+  agent {
+    kubernetes {
+      yaml """
 apiVersion: v1
 kind: Pod
 spec:
   containers:
+  - name: jnlp
+    image: jenkins/inbound-agent:latest
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
   - name: kubectl
     image: bitnami/kubectl:latest
     command:
-    - cat
-    tty: true
+    - sleep
+    args:
+    - 99d
 """
-        }
+    }
+  }
+
+  stages {
+    stage('Clone') {
+      steps {
+        git branch: 'main',
+            url: 'https://github.com/raah959/test.git'
+      }
     }
 
-    stages {
-        stage('Clone') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/raah959/test.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo "🔨 Building the application..."
-                sh 'echo "Simulating build step"'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo "🧪 Running tests..."
-                sh 'echo "Simulating test step"'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                container('kubectl') {
-                    echo "🚀 Deploying application..."
-                    sh 'kubectl apply -f k8s/deployment.yaml'
-                }
-            }
-        }
+    stage('Build') {
+      steps {
+        echo "🔨 Building..."
+      }
     }
+
+    stage('Deploy') {
+      steps {
+        container('kubectl') {
+          sh 'kubectl apply -f k8s/deployment.yaml'
+        }
+      }
+    }
+  }
 }
