@@ -1,18 +1,12 @@
 pipeline {
   agent {
-    label 'jenkins-agent'  // use the label you assigned
+    label 'jenkins-agent' 
   }
 
   stages {
     stage('Clone') {
       steps {
         git branch: 'main', url: 'https://github.com/raah959/test.git'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        echo "🔨 Building..."
       }
     }
 
