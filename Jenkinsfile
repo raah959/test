@@ -12,9 +12,8 @@ spec:
   - name: kubectl
     image: bitnami/kubectl:latest
     command:
-    - sleep
-    args:
-    - 99d
+      - cat
+    tty: true
 """
     }
   }
