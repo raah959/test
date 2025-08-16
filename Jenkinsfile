@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent {
+    label 'jenkins-agent'  // use the label you assigned
+  }
 
   stages {
     stage('Clone') {
